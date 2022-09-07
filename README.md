@@ -40,11 +40,13 @@ Optionnal switches can be added on the controler to produce patch up, patch down
 
 A led is provided to monitor the satus of the controler
 - Fast blinking= disconnected from the zoom
+
 in play mode:
 - Off = switch at off postion and current patch present in a pair : toggle is possible
 - ON = switch at on postion and current patch present in a pair : toggle is possible
 - One blink off = switch at off postion but current patch not present in a pair : toggle is not possible
 - One blink on = switch at on postion but current patch not present in a pair : toggle is not possible
+
 in setting mode:
 - Two slow blink off = switch at off postion and current patch not present in a pair : store is possible
 - Two slow blink on = switch at on postion and current patch not present in a pair : store is possible
