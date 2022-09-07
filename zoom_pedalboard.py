@@ -2,9 +2,7 @@
 # -*- coding:utf-8 -*-
 
 #--------------------------------
-# Headless Raspberry code template
 # 
-# Structure test program for
 # Zoom G1xFour controler
 #
 # F. Vieille
