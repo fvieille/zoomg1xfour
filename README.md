@@ -45,7 +45,7 @@ in play mode:
 - ON = switch at on postion and current patch present in a pair : toggle is possible
 - One blink off = switch at off postion but current patch not present in a pair : toggle is not possible
 - One blink on = switch at on postion but current patch not present in a pair : toggle is not possible
--in setting mode
+in setting mode:
 - Two slow blink off = switch at off postion and current patch not present in a pair : store is possible
 - Two slow blink on = switch at on postion and current patch not present in a pair : store is possible
 - Two fast blink off = switch at off postion and current patch allready present in a pair : store is not possible
