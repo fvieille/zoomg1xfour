@@ -13,6 +13,8 @@
 #
 #--------------------------------
 
+#--------------------------------
+
 ##################################
 # internal  led, shutdown
 ##################################
@@ -83,11 +85,11 @@ def shutdown():
 try:
 	#real raspberry
 	import RPi.GPIO as GPIO
-	hardware_gpio=True # used to light internal raspberry led
+	onboard_led=False # true/false used to light internal raspberry led !! Caution slow down a lot, disturbing witches detecteion (debounce) 
 	sw_toggle_latch=True #used to consider sw_toogle button as latched
 except:
 	#computer : will only work with python 3 as EmulatorGUI not workinf with python3
-	hardware_gpio=False 
+	onboard_led=False #disable onboard led if computer 
 	sw_toggle_latch=False #used to consider sw_toogle as momentary 
 	from test_libs.GPIOEmulator.EmulatorGUI import GPIO
 	pass
@@ -165,7 +167,7 @@ class bled: #linking led
 			#GPIO.output(17,GPIO.HIGH)
 			#GPIO.output(17,GPIO.LOW)
 			GPIO.output(self.pin,self.seq[0])
-			if hardware_gpio == True:
+			if onboard_led == True:
 				if self.seq[0] == GPIO.HIGH:
 					os.system('echo 1 | sudo tee /sys/class/leds/led0/brightness > /dev/null 2>&1')
 				else:
@@ -185,7 +187,7 @@ class bled: #linking led
 				else:
 					self.seq_step = self.seq_step +1 # next step
 				GPIO.output(self.pin, self.seq[self.seq_step *2]) #set led value for step
-				if hardware_gpio == True:
+				if onboard_led == True:
 					if self.seq[self.seq_step *2] == GPIO.HIGH:
 						os.system('echo 1 | sudo tee /sys/class/leds/led0/brightness > /dev/null 2>&1')
 					else:
@@ -257,7 +259,7 @@ if __name__ == "__main__":
 
 	#Led class setup
 	led_switch=bled(23,GPIO.LOW)
-	if hardware_gpio==True:
+	if onboard_led==True:
 		os.system('echo gpio | sudo tee /sys/class/leds/led0/trigger > /dev/null 2>&1')
 
 
@@ -310,6 +312,9 @@ if __name__ == "__main__":
 	#  Main loop
 	#-------------------------------------------------------
 	while True: #main loop
+		#to monitor CPU time
+		#exectimer=timer()
+		
 		#get patch from Zoom
 		#current_patch = current_patch #joke !!!!
 		#
@@ -321,6 +326,7 @@ if __name__ == "__main__":
 		keyboard=get_keyboard()
 		if keyboard == "q":
 			shutdown()
+			quit()
 
 		if keyboard == "s":
 			print ("Setting(s):")
@@ -518,6 +524,7 @@ if __name__ == "__main__":
 				print ("Shutdown")
 				shutdown()
 				sw_toggle_count =0
+				os.system('sudo  shutdown now &')
 				quit()
 
 		
@@ -576,9 +583,9 @@ if __name__ == "__main__":
 		#---------------------------
 		sw_connect.get()
 		#immediate actions if edge
-		if sw_connect.edge == True and sw_connect.current ==True: # for testing with GPIOSimulator : momentary
-			sw_connect_current = not sw_connect_current # for testing with GPIOSimulator : momentary
-			print ("Connect=", sw_connect_current)
+		#if sw_connect.edge == True and sw_connect.current ==True: # for testing with GPIOSimulator : momentary
+		#	sw_connect_current = not sw_connect_current # for testing with GPIOSimulator : momentary
+		#	print ("Connect=", sw_connect_current)
 
 
 		#-----------------------------
@@ -587,30 +594,30 @@ if __name__ == "__main__":
 		# when play mode and OK (current patch in settings)
 		if sw_toggle_current == True and mode==1 and setting_index != -1: #Play, ON, OK to change patch
 			led_switch.seq = [GPIO.HIGH]
-		if sw_toggle_current == False and mode==1 and setting_index != -1:#Play, OFF, OK to change patch
+		if sw_toggle_current == False and mode==1 and setting_index != -1: #Play, OFF, OK to change patch
 			led_switch.seq = [GPIO.LOW]
 			
 		# when play mode and patch not in settings)
 		if sw_toggle_current == True and mode==1 and setting_index == -1: #Play, ON, not OK to change patch
 			led_switch.seq = [GPIO.LOW,0.25,GPIO.HIGH,0.75]
-		if sw_toggle_current == False and mode==1 and setting_index == -1:# Play, OFF, not OK to change patch
+		if sw_toggle_current == False and mode==1 and setting_index == -1: # Play, OFF, not OK to change patch
 			led_switch.seq = [GPIO.HIGH,0.25,GPIO.LOW,0.75]
 
 			
 			
 		#when setting
 		if mode==2 and sw_toggle_current == False and setting_index == -1:
-			led_switch.seq = [GPIO.HIGH,0.25,GPIO.LOW,0.25,GPIO.HIGH,0.25,GPIO.LOW,0.75]#Settings, OFF, OK to store
+			led_switch.seq = [GPIO.HIGH,0.25,GPIO.LOW,0.25,GPIO.HIGH,0.25,GPIO.LOW,0.75] #Settings, OFF, OK to store
 		if mode==2 and sw_toggle_current == True and setting_index == -1:
-			led_switch.seq = [GPIO.LOW,0.25,GPIO.HIGH,0.25,GPIO.LOW,0.25,GPIO.HIGH,0.75]#Settings, ON, OK to store
+			led_switch.seq = [GPIO.LOW,0.25,GPIO.HIGH,0.25,GPIO.LOW,0.25,GPIO.HIGH,0.75] #Settings, ON, OK to store
 
 		if mode==2 and setting_index != -1:
-			led_switch.seq = [GPIO.HIGH,0.2,GPIO.LOW,0.2,GPIO.HIGH,0.2,GPIO.LOW,0.4]#Settings, Not OK to store
+			led_switch.seq = [GPIO.HIGH,0.2,GPIO.LOW,0.2,GPIO.HIGH,0.2,GPIO.LOW,0.4] #Settings, Not OK to store
 
 	
 		#when disconnected (win play or setting mode)
-		if  sw_connect_current == True:
-			led_switch.seq = [GPIO.LOW,0.2,GPIO.HIGH,0.2]#Disconnected
+		if  connected == False:
+			led_switch.seq = [GPIO.LOW,0.2,GPIO.HIGH,0.2] #Disconnected
 
 			
 		led_switch.update()
@@ -619,4 +626,6 @@ if __name__ == "__main__":
 		#--------------------
 		# loop rate
 		#--------------------
+		#Monitor CPu time 
+		#print(timer() - exectimer)
 		sleep(0.01)
