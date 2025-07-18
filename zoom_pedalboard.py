@@ -13,7 +13,8 @@
 # http://github.com/shooking/ZoomPedalFun
 #
 #--------------------------------
-
+#update ?? 2023 auto reconnect
+#update 25/02/2025
 ##################################
 # internal  led, shutdown
 ##################################
@@ -257,27 +258,27 @@ if __name__ == "__main__":
 	#GPIO.setup(18, GPIO.OUT, initial = GPIO.LOW)
 
 	#Led class setup
-	led_switch=bled(23,GPIO.LOW)
+	led_switch=bled(17,GPIO.LOW)
 	if onboard_led==True:
 		os.system('echo gpio | sudo tee /sys/class/leds/led0/trigger > /dev/null 2>&1')
 
 
 
 	#Button class setup
-	sw_toggle = dbutton(24, GPIO.PUD_DOWN, 0.01)
+	sw_toggle = dbutton(4, GPIO.PUD_DOWN, 0.01)
 	sw_toggle_current=False # for testing with GPIOSimulator : momentary
 	sw_toggle_count=0
 
 
 
 	#pour test: sera remplacé par passage en tune passage en tune
-	sw_tune = dbutton(22, GPIO.PUD_DOWN, 0.01)
+	sw_tune = dbutton(24, GPIO.PUD_DOWN, 0.01)
 	sw_tune_current=False # for testing with GPIOSimulator : momentary
 
-	pb_patch_up = dbutton(27, GPIO.PUD_DOWN, 0.01)
-	pb_patch_dn = dbutton(17, GPIO.PUD_DOWN, 0.01)
+	pb_patch_up = dbutton(22, GPIO.PUD_DOWN, 0.01)
+	pb_patch_dn = dbutton(23, GPIO.PUD_DOWN, 0.01)
 
-	sw_connect  = dbutton(2, GPIO.PUD_DOWN, 0.01)
+	sw_connect  = dbutton(10, GPIO.PUD_DOWN, 0.01)
 	sw_connect_current=False # for testing with GPIOSimulator : momentary
 
 
