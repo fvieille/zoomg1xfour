@@ -3,6 +3,7 @@
 
 #--------------------------------
 # 
+# Structure test program for
 # Zoom G1xFour controler
 #
 # F. Vieille
@@ -11,8 +12,6 @@
 # examples and ressources:
 # http://github.com/shooking/ZoomPedalFun
 #
-#--------------------------------
-
 #--------------------------------
 
 ##################################
@@ -353,10 +352,13 @@ if __name__ == "__main__":
 					break
 		else:
 			connected=False
-			for port in mido.get_input_names():
-				if port[:len(midiname)]==midiname:
-					connected=True
-					break
+			try:
+				for port in mido.get_input_names():
+					if port[:len(midiname)]==midiname:
+						connected=True
+						break
+			except:
+				pass
 			if connected == False:
 				print ("Disconnected")
 		
